@@ -1,44 +1,47 @@
+using FitnessPT_api.GoogleAuth;
+using FitnessPT_api.GoogleAuth.Common.Interfaces;
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Controllers 추가
+builder.Services.AddControllers();
+
+// Google Auth 모듈 추가
+builder.Services.AddGoogleAuthModule(builder.Configuration);
+
+// IUserRepository 구현체 등록
+builder.Services.AddScoped<IUserRepository, InMemoryUserRepository>();
+
+// Swagger 기본 설정만
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "FitnessPT Google Auth API",
+        Version = "v1"
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 개발 환경에서만 Swagger 사용
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// 정적 파일 서빙 추가 ⭐
+app.UseStaticFiles();
+
+// 기본 페이지 라우팅 추가 ⭐
+app.MapGet("/", () => Results.Redirect("/test-login.html"));
+app.MapGet("/test", () => Results.Redirect("/test-login.html"));
+
+
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

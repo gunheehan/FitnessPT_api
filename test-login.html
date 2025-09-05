@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitnessPT Google Login Test</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 20px 0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #4285f4;
+            margin-bottom: 10px;
+        }
+        .step {
+            margin: 25px 0;
+            padding: 20px;
+            border-left: 4px solid #4285f4;
+            background-color: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+        }
+        .step h3 {
+            color: #1a73e8;
+            margin-top: 0;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .input-group input:focus {
+            border-color: #4285f4;
+            outline: none;
+        }
+        .btn {
+            background: linear-gradient(45deg, #4285f4, #34a853);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .token-display {
+            background-color: #f1f3f4;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .copy-btn {
+            background-color: #34a853;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .login-section {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .api-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .api-link {
+            background-color: #1a73e8;
+            color: white;
+            padding: 10px 16px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+        .api-link:hover {
+            background-color: #1557b7;
+        }
+        .result-section {
+            background-color: #e8f0fe;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🏋️‍♂️ FitnessPT Google Auth Test</h1>
+        <p>서버에서 제공하는 Google OAuth 테스트 페이지</p>
+    </div>
+
+    <div class="api-links">
+        <a href="/swagger" class="api-link" target="_blank">📚 Swagger API 문서</a>
+        <a href="/api/GoogleAuth/status" class="api-link" target="_blank">🔍 API 상태 확인</a>
+        <a href="javascript:void(0)" class="api-link" onclick="testApiStatus()">⚡ API 연결 테스트</a>
+    </div>
+
+    <div id="apiTestResult"></div>
+
+    <div class="step">
+        <h3>1️⃣ Google Client ID 설정</h3>
+        <div class="warning">
+            <strong>⚠️ 필수:</strong> Google Cloud Console에서 OAuth 클라이언트 ID를 생성하고 아래에 입력하세요.
+            <br><br>
+            <strong>승인된 JavaScript 원본에 추가할 URL:</strong>
+            <br>• <code id="currentOrigin"></code>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="clientIdInput" placeholder="Google Client ID 입력 (예: 123456789-abc.apps.googleusercontent.com)">
+        </div>
+        <button class="btn" onclick="setupGoogleLogin()">🔧 Google 로그인 설정</button>
+    </div>
+
+    <div class="step" id="loginStep" style="display: none;">
+        <h3>2️⃣ Google 로그인</h3>
+        <div class="login-section">
+            <div id="g_id_onload"></div>
+            <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"></div>
+            <p style="margin-top: 15px; color: #666;">위 버튼을 클릭하여 Google 계정으로 로그인하세요</p>
+        </div>
+    </div>
+
+    <div class="step" id="tokenStep" style="display: none;">
+        <h3>3️⃣ Google ID Token</h3>
+        <div class="success">
+            <strong>✅ Google 로그인 성공!</strong>
+            <div id="userInfo"></div>
+        </div>
+
+        <h4>ID Token:</h4>
+        <div class="token-display" id="tokenDisplay"></div>
+        <button class="copy-btn" onclick="copyToken()">📋 토큰 복사</button>
+
+        <h4>자동 API 테스트:</h4>
+        <button class="btn" onclick="testGoogleLogin()" style="margin-right: 10px;">🚀 백엔드 API 테스트</button>
+        <button class="btn" onclick="openSwaggerWithToken()">📚 Swagger에서 테스트</button>
+    </div>
+
+    <div class="step" id="resultStep" style="display: none;">
+        <h3>4️⃣ API 테스트 결과</h3>
+        <div class="result-section">
+            <div id="apiResult"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentToken = '';
+    let currentClientId = '';
+
+    // 현재 도메인 표시
+    document.getElementById('currentOrigin').textContent = window.location.origin;
+
+    function setupGoogleLogin() {
+        const clientId = document.getElementById('clientIdInput').value.trim();
+        if (!clientId) {
+            alert('Google Client ID를 입력해주세요.');
+            return;
+        }
+
+        currentClientId = clientId;
+
+        // Google 로그인 초기화
+        if (window.google) {
+            window.google.accounts.id.initialize({
+                client_id: clientId,
+                callback: handleCredentialResponse,
+                auto_prompt: false
+            });
+
+            window.google.accounts.id.renderButton(
+                document.querySelector('.g_id_signin'),
+                {
+                    theme: 'outline',
+                    size: 'large',
+                    width: 250
+                }
+            );
+
+            document.getElementById('loginStep').style.display = 'block';
+            document.querySelector('#loginStep .login-section p').textContent =
+                '✅ 설정 완료! 위 Google 로그인 버튼을 클릭하세요.';
+        } else {
+            alert('Google GSI 라이브러리가 로드되지 않았습니다. 페이지를 새로고침하세요.');
+        }
+    }
+
+    function handleCredentialResponse(response) {
+        currentToken = response.credential;
+
+        // 토큰 파싱하여 사용자 정보 표시
+        try {
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+
+            document.getElementById('userInfo').innerHTML = `
+                    <br><strong>이메일:</strong> ${payload.email}
+                    <br><strong>이름:</strong> ${payload.name}
+                    <br><strong>프로필 이미지:</strong> <img src="${payload.picture}" width="40" style="border-radius: 50%; vertical-align: middle;">
+                `;
+
+            document.getElementById('tokenDisplay').textContent = currentToken;
+            document.getElementById('tokenStep').style.display = 'block';
+
+            // 자동으로 API 테스트 실행
+            setTimeout(() => {
+                testGoogleLogin();
+            }, 1000);
+
+        } catch (e) {
+            console.error('토큰 파싱 오류:', e);
+        }
+    }
+
+    async function testApiStatus() {
+        try {
+            const response = await fetch('/api/GoogleAuth/status');
+            const data = await response.json();
+
+            document.getElementById('apiTestResult').innerHTML = `
+                    <div class="success">
+                        <strong>✅ API 연결 성공!</strong>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+        } catch (error) {
+            document.getElementById('apiTestResult').innerHTML = `
+                    <div class="warning">
+                        <strong>❌ API 연결 실패:</strong> ${error.message}
+                    </div>
+                `;
+        }
+    }
+
+    async function testGoogleLogin() {
+        if (!currentToken) {
+            alert('먼저 Google 로그인을 해주세요.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/GoogleAuth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    googleToken: currentToken
+                })
+            });
+
+            const data = await response.json();
+
+            let resultHtml = '';
+            if (response.ok && data.success) {
+                resultHtml = `
+                        <div class="success">
+                            <strong>🎉 백엔드 인증 성공!</strong>
+                            <br><strong>사용자 ID:</strong> ${data.user.id}
+                            <br><strong>이메일:</strong> ${data.user.email}
+                            <br><strong>역할:</strong> ${data.user.role}
+                            <br><strong>신규 사용자:</strong> ${data.isNewUser ? '예' : '아니오'}
+                            <br><br>
+                            <strong>JWT Access Token:</strong>
+                            <div class="token-display" style="max-height: 100px; overflow-y: auto;">
+                                ${data.accessToken}
+                            </div>
+                            <button class="copy-btn" onclick="copyJwtToken('${data.accessToken}')">JWT 토큰 복사</button>
+                        </div>
+                    `;
+            } else {
+                resultHtml = `
+                        <div class="warning">
+                            <strong>❌ 인증 실패:</strong>
+                            <br>${data.errorMessage || '알 수 없는 오류'}
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+            }
+
+            document.getElementById('apiResult').innerHTML = resultHtml;
+            document.getElementById('resultStep').style.display = 'block';
+
+        } catch (error) {
+            document.getElementById('apiResult').innerHTML = `
+                    <div class="warning">
+                        <strong>❌ API 호출 실패:</strong> ${error.message}
+                    </div>
+                `;
+            document.getElementById('resultStep').style.display = 'block';
+        }
+    }
+
+    function copyToken() {
+        copyToClipboard(currentToken, 'Google ID Token이 복사되었습니다!');
+    }
+
+    function copyJwtToken(token) {
+        copyToClipboard(token, 'JWT Token이 복사되었습니다!');
+    }
+
+    function copyToClipboard(text, message) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert(message);
+        }).catch(err => {
+            // 대체 복사 방법
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert(message);
+        });
+    }
+
+    function openSwaggerWithToken() {
+        window.open('/swagger', '_blank');
+        alert('Swagger가 새 창에서 열립니다.\n\n1. 우상단 🔒 Authorize 버튼 클릭\n2. Bearer 필드에 JWT 토큰 입력\n3. verify-token API 테스트');
+    }
+</script>
+</body>
+</html>
