@@ -30,8 +30,4 @@
       <Folder Include="wwwroot\swagger\" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Include="wwwroot\test-login.html" />
-    </ItemGroup>
-
 </Project>
