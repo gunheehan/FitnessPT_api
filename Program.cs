@@ -34,14 +34,14 @@ if (app.Environment.IsDevelopment())
 }
 
 // 정적 파일 서빙 추가 ⭐
-//app.UseStaticFiles();
+app.UseStaticFiles();
 
 // 기본 페이지 라우팅 추가 ⭐
 app.MapGet("/", () => Results.Redirect("/test-login.html"));
 app.MapGet("/test", () => Results.Redirect("/test-login.html"));
 
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.MapControllers();
 
 app.Run();
