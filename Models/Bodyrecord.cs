@@ -7,7 +7,7 @@ public partial class Bodyrecord
 {
     public int RecordId { get; set; }
 
-    public int? UserId { get; set; }
+    public int UserId { get; set; }
 
     public DateOnly RecordedDate { get; set; }
 
@@ -19,7 +19,7 @@ public partial class Bodyrecord
 
     public string? Notes { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public virtual User? User { get; set; }
 }
