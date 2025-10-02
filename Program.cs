@@ -8,17 +8,11 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// PostgreSQL 연결 설정
+// MySQL 연결
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<FitnessDbContext>(options =>
-    options.UseNpgsql(connectionString, npgsqlOptions =>
-    {
-        npgsqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorCodesToAdd: null);
-        npgsqlOptions.CommandTimeout(30);
-    }));
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
 
 // Controllers 추가
 builder.Services.AddControllers()
@@ -136,39 +130,6 @@ app.MapGet("/", () => new
     }
 });
 
-// Health Check
-app.MapGet("/health", async (FitnessDbContext context) =>
-{
-    try
-    {
-        await context.Database.CanConnectAsync();
-        
-        var stats = new
-        {
-            status = "healthy",
-            timestamp = DateTime.UtcNow,
-            database = "connected",
-            version = "1.0.0",
-            environment = app.Environment.EnvironmentName,
-            controllers = new[]
-            {
-                "ExercisesController",
-                "CategoriesController", 
-                "UsersController",
-                "UserProfilesController",
-                "WorkoutRecordsController",
-                "BodyRecordsController"
-            }
-        };
-        
-        return Results.Ok(stats);
-    }
-    catch (Exception ex)
-    {
-        return Results.Problem(detail: ex.Message, statusCode: 503);
-    }
-});
-
 // 컨트롤러 목록 확인 엔드포인트
 app.MapGet("/api/controllers", () =>
 {
@@ -192,31 +153,6 @@ app.MapGet("/api/controllers", () =>
 
 app.UseHttpsRedirection();
 app.MapControllers();
-
-// 데이터베이스 연결 확인 (개발 환경에서만)
-if (app.Environment.IsDevelopment())
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var context = scope.ServiceProvider.GetRequiredService<FitnessDbContext>();
-        try
-        {
-            // 데이터베이스 연결 확인
-            await context.Database.CanConnectAsync();
-            app.Logger.LogInformation("✅ 데이터베이스 연결이 성공적으로 확인되었습니다.");
-            
-            // 기본 데이터 확인
-            var exerciseCount = await context.Exercises.CountAsync();
-            var categoryCount = await context.Exercisecategories.CountAsync();
-            app.Logger.LogInformation("📊 현재 DB 상태 - 운동: {ExerciseCount}개, 카테고리: {CategoryCount}개", 
-                exerciseCount, categoryCount);
-        }
-        catch (Exception ex)
-        {
-            app.Logger.LogError(ex, "❌ 데이터베이스 연결에 실패했습니다.");
-        }
-    }
-}
 
 app.Logger.LogInformation("🚀 FitnessPT API 서버가 시작되었습니다.");
 
