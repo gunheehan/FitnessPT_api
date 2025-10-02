@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using FitnessPT_api.GoogleAuth.Common.Interfaces;
 using FitnessPT_api.GoogleAuth.Models;

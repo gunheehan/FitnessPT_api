@@ -2,6 +2,7 @@
 
 using FitnessPT_api.GoogleAuth.Common.Interfaces;
 using FitnessPT_api.GoogleAuth.Models;
+using FitnessPT_api.Models;
 
 namespace FitnessPT_api.GoogleAuth.Services;
 
@@ -34,13 +35,13 @@ public class GoogleAuthService : IGoogleAuthService
             // 2. 기존 사용자 확인
             var existingUser = await _userRepository.GetByGoogleIdAsync(googleTokenInfo.GoogleId, cancellationToken);
             
-            GoogleUser user;
+            User user;
             bool isNewUser = false;
             
             if (existingUser == null)
             {
                 // 3. 신규 사용자 생성
-                user = new GoogleUser
+                user = new User
                 {
                     GoogleId = googleTokenInfo.GoogleId,
                     Email = googleTokenInfo.Email,
@@ -86,7 +87,7 @@ public class GoogleAuthService : IGoogleAuthService
             }
 
             // 4. JWT 토큰 생성
-            var accessToken = _jwtTokenService.GenerateAccessToken(user.Id, user.Email, user.Role);
+            var accessToken = _jwtTokenService.GenerateAccessToken(user.UserId, user.Email, user.Role);
             var refreshToken = _jwtTokenService.GenerateRefreshToken();
 
             return new GoogleAuthResult

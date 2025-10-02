@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿
 namespace FitnessPT_api.Models;
 
-public partial class User
+public class User
 {
     public int UserId { get; set; }
 
@@ -17,7 +15,7 @@ public partial class User
 
     public string Role { get; set; } = null!;
 
-    public bool? IsActive { get; set; }
+    public bool IsActive { get; set; }
 
     public DateTime? LastLoginAt { get; set; }
 

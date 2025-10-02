@@ -10,25 +10,25 @@ using FitnessPT_api.Models;
 [ApiController]
 public class UsersController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly AppDbContext context;
 
-    public UsersController(AppDbContext context)
+    public UsersController(AppDbContext _context)
     {
-        _context = context;
+        context = _context;
     }
 
     // GET: api/Users
     [HttpGet]
     public async Task<ActionResult<IEnumerable<User>>> GetUsers()
     {
-        return await _context.Users.ToListAsync();
+        return await context.Users.ToListAsync();
     }
 
     // GET: api/Users/5
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUser(int id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await context.Users.FindAsync(id);
         if (user == null) return NotFound();
         return user;
     }
@@ -37,8 +37,8 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<User>> CreateUser(User user)
     {
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
     }
 
@@ -49,9 +49,9 @@ public class UsersController : ControllerBase
         if (id != user.UserId) return BadRequest();
 
         user.UpdatedAt = DateTime.UtcNow;
-        _context.Entry(user).State = EntityState.Modified;
+        context.Entry(user).State = EntityState.Modified;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
         return NoContent();
     }
 
@@ -59,11 +59,11 @@ public class UsersController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await context.Users.FindAsync(id);
         if (user == null) return NotFound();
 
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
+        context.Users.Remove(user);
+        await context.SaveChangesAsync();
         return NoContent();
     }
 }
