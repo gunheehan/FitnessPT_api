@@ -16,13 +16,13 @@ public class JwtTokenService : IJwtTokenService
 
     public JwtTokenService(IConfiguration configuration)
     {
-        _secretKey = configuration["GoogleAuth:Jwt:Key"] 
-            ?? throw new ArgumentNullException("GoogleAuth:Jwt:Key가 설정되지 않았습니다.");
-        _issuer = configuration["GoogleAuth:Jwt:Issuer"] 
-            ?? throw new ArgumentNullException("GoogleAuth:Jwt:Issuer가 설정되지 않았습니다.");
-        _audience = configuration["GoogleAuth:Jwt:Audience"] 
-            ?? throw new ArgumentNullException("GoogleAuth:Jwt:Audience가 설정되지 않았습니다.");
-        _expiryMinutes = int.Parse(configuration["GoogleAuth:Jwt:ExpiryInMinutes"] ?? "60");
+        _secretKey = configuration["FITNESSPT:GoogleAuth:Jwt:Key"] 
+            ?? throw new ArgumentNullException("FITNESSPT:GoogleAuth:Jwt:Key가 설정되지 않았습니다.");
+        _issuer = configuration["FITNESSPT:GoogleAuth:Jwt:Issuer"] 
+            ?? throw new ArgumentNullException("FITNESSPT:GoogleAuth:Jwt:Issuer가 설정되지 않았습니다.");
+        _audience = configuration["FITNESSPT:GoogleAuth:Jwt:Audience"] 
+            ?? throw new ArgumentNullException("FITNESSPT:GoogleAuth:Jwt:Audience가 설정되지 않았습니다.");
+        _expiryMinutes = int.Parse(configuration["FITNESSPT:GoogleAuth:Jwt:ExpiryInMinutes"] ?? "60");
     }
 
     public string GenerateAccessToken(int userId, string email, string role)

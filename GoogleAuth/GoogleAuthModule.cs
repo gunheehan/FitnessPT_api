@@ -35,9 +35,9 @@ public static class GoogleAuthModule
     {
         var requiredKeys = new[]
         {
-            "GoogleAuth:Jwt:Key",
-            "GoogleAuth:Jwt:Issuer", 
-            "GoogleAuth:Jwt:Audience"
+            "FITNESSPT:GoogleAuth:Jwt:Key",
+            "FITNESSPT:GoogleAuth:Jwt:Issuer", 
+            "FITNESSPT:GoogleAuth:Jwt:Audience"
         };
         
         foreach (var key in requiredKeys)
