@@ -1,7 +1,9 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+
 namespace FitnessPT_api.Models;
 
-public class User
+public partial class User
 {
     public int UserId { get; set; }
 
@@ -15,11 +17,13 @@ public class User
 
     public string Role { get; set; } = null!;
 
-    public bool IsActive { get; set; }
+    public bool? IsActive { get; set; }
 
     public DateTime? LastLoginAt { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
+
+    public virtual ICollection<Routine> Routines { get; set; } = new List<Routine>();
 }
