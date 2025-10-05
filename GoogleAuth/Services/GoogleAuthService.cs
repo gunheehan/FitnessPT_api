@@ -10,7 +10,7 @@ public class GoogleAuthService : IGoogleAuthService
 {
     private readonly IGoogleTokenValidator _tokenValidator;
     private readonly IJwtTokenService _jwtTokenService;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserRepository _userRepository; // User DB 연동
     private readonly ILogger<GoogleAuthService> _logger;
 
     public GoogleAuthService(
