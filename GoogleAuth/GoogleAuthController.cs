@@ -47,24 +47,6 @@ public class GoogleAuthController : ControllerBase
     /// <param name="cancellationToken"></param>
     /// <returns>JWT 토큰 및 사용자 정보</returns>
     /// <remarks>
-    /// **Google ID Token 획득 방법:**
-    /// 
-    /// 1. **Google Developers Console**에서 OAuth 클라이언트 ID 생성
-    /// 2. **테스트용 HTML 페이지** 생성:
-    /// 
-    /// ```html
-    /// &lt;script src="https://accounts.google.com/gsi/client"&gt;&lt;/script&gt;
-    /// &lt;div id="g_id_onload" data-client_id="YOUR_CLIENT_ID" data-callback="handleCredentialResponse"&gt;&lt;/div&gt;
-    /// &lt;div class="g_id_signin"&gt;&lt;/div&gt;
-    /// &lt;script&gt;
-    /// function handleCredentialResponse(response) {
-    ///     console.log("Google ID Token: " + response.credential);
-    ///     // 이 토큰을 아래 API에 전송
-    /// }
-    /// &lt;/script&gt;
-    /// ```
-    /// 
-    /// 3. **또는 JWT.io**에서 샘플 토큰 생성 가능
     /// 
     /// **응답 예시:**
     /// ```json
@@ -138,11 +120,6 @@ public class GoogleAuthController : ControllerBase
     /// <param name="cancellationToken"></param>
     /// <returns>현재 인증된 사용자 정보</returns>
     /// <remarks>
-    /// **사용 방법:**
-    /// 1. `/login` 엔드포인트에서 JWT 토큰 획득
-    /// 2. Swagger 상단의 🔒 버튼 클릭
-    /// 3. `Bearer {획득한_accessToken}` 형식으로 입력
-    /// 4. 이 엔드포인트 호출
     /// 
     /// **응답 예시:**
     /// ```json
@@ -198,78 +175,6 @@ public class GoogleAuthController : ControllerBase
             {
                 Error = "토큰 검증 중 오류가 발생했습니다.",
                 Message = ex.Message
-            });
-        }
-    }
-
-    /// <summary>
-    /// 📊 Google 인증 통계 정보
-    /// </summary>
-    /// <returns>현재 메모리에 저장된 사용자 통계</returns>
-    [HttpGet("stats")]
-    public ActionResult<object> GetAuthStats()
-    {
-        // InMemoryUserRepository에서 통계 정보 가져오기
-        // 실제 DB 구현 시에는 DB에서 통계 조회
-        
-        return Ok(new
-        {
-            TotalUsers = "N/A (InMemory 구현)",
-            NewUsersToday = "N/A (InMemory 구현)",
-            ActiveSessions = "N/A (JWT는 stateless)",
-            LastLoginTime = DateTime.UtcNow,
-            Message = "현재는 InMemory 저장소를 사용하므로 실제 통계는 DB 연동 후 제공됩니다."
-        });
-    }
-
-    /// <summary>
-    /// 🛠️ Google 토큰 디버깅 도구
-    /// </summary>
-    /// <param name="request">Google ID Token</param>
-    /// <returns>토큰 정보 분석 결과</returns>
-    /// <remarks>
-    /// 개발용 디버깅 도구입니다. Google ID Token의 구조를 분석합니다.
-    /// 
-    /// **주의:** 실제 로그인은 수행하지 않고 토큰 구조만 분석합니다.
-    /// </remarks>
-    [HttpPost("debug-token")]
-    public async Task<ActionResult<object>> DebugGoogleToken(
-        [FromBody] GoogleAuthRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            // Google 토큰 검증만 수행 (실제 로그인은 안 함)
-            var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync($"https://oauth2.googleapis.com/tokeninfo?id_token={request.GoogleToken}", cancellationToken);
-            
-            if (!response.IsSuccessStatusCode)
-            {
-                return BadRequest(new
-                {
-                    Error = "Invalid Google Token",
-                    StatusCode = response.StatusCode,
-                    Message = "Google에서 토큰을 인식하지 못했습니다."
-                });
-            }
-
-            var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            
-            return Ok(new
-            {
-                Message = "Google 토큰 분석 완료",
-                TokenValid = true,
-                GoogleResponse = System.Text.Json.JsonSerializer.Deserialize<object>(jsonContent),
-                Note = "이것은 디버깅용이며 실제 로그인은 /login 엔드포인트를 사용하세요."
-            });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new
-            {
-                Error = "Token Analysis Failed",
-                Message = ex.Message,
-                Note = "토큰 형식이 올바르지 않거나 만료되었을 수 있습니다."
             });
         }
     }
