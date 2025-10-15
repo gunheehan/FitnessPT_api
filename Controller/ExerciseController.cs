@@ -12,11 +12,13 @@ public class ExerciseController : ControllerBase
 {
     private IExerciseRepository repository;
     private IDateTimeService timeService;
+    private readonly ILogger<ExerciseController> logger;
 
-    public ExerciseController(IExerciseRepository _repository, IDateTimeService _timeService)
+    public ExerciseController(IExerciseRepository _repository, IDateTimeService _timeService, ILogger<ExerciseController> _logger)
     {
         repository = _repository;
         timeService = _timeService;
+        logger = _logger;
     }
 
     [HttpGet]
@@ -25,17 +27,12 @@ public class ExerciseController : ControllerBase
     {
         try
         {
-            if (page < 1)
-                return BadRequest(new { message = "페이지는 1 이상이어야 합니다." });
-
-            if (pageSize < 1 || pageSize > 100)
-                return BadRequest(new { message = "페이지 크기는 1-100 사이여야 합니다." });
-
             var result = await repository.GetAllExerciseAsync(page, pageSize, level, category);
             return Ok(result);
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "운동 리스트 반환 오류");
             return StatusCode(500, new { message = "서버 오류가 발생했습니다." });
         }
     }
@@ -106,6 +103,7 @@ public class ExerciseController : ControllerBase
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "운동 리스트 추가 오류");
             return StatusCode(500, new { message = "서버 오류가 발생했습니다." });
         }
     }
@@ -137,6 +135,7 @@ public class ExerciseController : ControllerBase
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "운동 리스트 업데이트 오류");
             return StatusCode(500, new { message = "서버 오류가 발생했습니다." });
         }
     }
@@ -156,6 +155,7 @@ public class ExerciseController : ControllerBase
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "운동 리스트 삭제 오류");
             return StatusCode(500, new { message = "서버 오류가 발생했습니다." });
         }
     }
