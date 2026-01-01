@@ -38,6 +38,8 @@ public partial class RoutineExercise
 
     public DateTime? CreatedAt { get; set; }
 
+    public string ExerciseName { get; set; } = null!;
+
     public virtual Exercise Exercise { get; set; } = null!;
 
     public virtual Routine Routine { get; set; } = null!;

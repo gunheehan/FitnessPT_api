@@ -64,7 +64,7 @@ public partial class AppDbContext : DbContext
                 .HasColumnType("text")
                 .HasColumnName("description");
             entity.Property(e => e.ImageUrl)
-                .HasMaxLength(255)
+                .HasMaxLength(2000)
                 .HasColumnName("image_url");
             entity.Property(e => e.Level)
                 .HasColumnType("enum('beginner','intermediate','advanced')")
@@ -78,7 +78,7 @@ public partial class AppDbContext : DbContext
                 .HasColumnType("timestamp")
                 .HasColumnName("updated_at");
             entity.Property(e => e.VideoUrl)
-                .HasMaxLength(255)
+                .HasMaxLength(2000)
                 .HasColumnName("video_url");
         });
 
@@ -153,6 +153,10 @@ public partial class AppDbContext : DbContext
                 .HasComment("시간 기반 운동(초)")
                 .HasColumnName("duration_seconds");
             entity.Property(e => e.ExerciseId).HasColumnName("exercise_id");
+            entity.Property(e => e.ExerciseName)
+                .HasMaxLength(1)
+                .IsFixedLength()
+                .HasColumnName("exercise_name");
             entity.Property(e => e.OrderIndex)
                 .HasComment("루틴 내 운동 순서")
                 .HasColumnName("order_index");
