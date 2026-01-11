@@ -79,7 +79,8 @@ public class RoutineRepository : Repository<Routine>, IRoutineRepository
                     Sets = entity.Sets,
                     Reps = entity.Reps,
                     DurationSeconds = entity.DurationSeconds,
-                    RestSeconds = entity.RestSeconds
+                    RestSeconds = entity.RestSeconds,
+                    ExerciseName = entity.ExerciseName
                 };
 
                 await context.RoutineExercises.AddAsync(routineExercise);

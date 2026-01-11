@@ -49,6 +49,11 @@ public class RoutineExerciseDto
     /// 세트 간 휴식(초)
     /// </summary>
     public int? RestSeconds { get; set; }
+    
+    /// <summary>
+    /// 운동 이름
+    /// </summary>
+    public string ExerciseName { get; set; }
 }
 
 public class RoutineInfoDto

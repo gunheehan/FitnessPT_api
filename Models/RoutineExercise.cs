@@ -38,7 +38,7 @@ public partial class RoutineExercise
 
     public DateTime? CreatedAt { get; set; }
 
-    public string ExerciseName { get; set; } = null!;
+    public string? ExerciseName { get; set; }
 
     public virtual Exercise Exercise { get; set; } = null!;
 

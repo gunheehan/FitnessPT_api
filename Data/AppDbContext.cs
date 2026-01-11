@@ -154,8 +154,7 @@ public partial class AppDbContext : DbContext
                 .HasColumnName("duration_seconds");
             entity.Property(e => e.ExerciseId).HasColumnName("exercise_id");
             entity.Property(e => e.ExerciseName)
-                .HasMaxLength(1)
-                .IsFixedLength()
+                .HasMaxLength(200)
                 .HasColumnName("exercise_name");
             entity.Property(e => e.OrderIndex)
                 .HasComment("루틴 내 운동 순서")
