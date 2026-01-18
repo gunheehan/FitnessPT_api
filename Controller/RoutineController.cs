@@ -23,12 +23,12 @@ public class RoutineController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<PagedResult<RoutineDto>>> GetAllRoutine(int page = 1, int pageSize = 20,
+    public async Task<ActionResult<PagedResult<RoutineDto>>> GetAllRoutine(int page = 1, int pageSize = 20, int userid = 0,
         string? level = null, string? category = null)
     {
         try
         {
-            var result = await repository.GetAllRoutinesAsync(page, pageSize, 0);
+            var result = await repository.GetAllRoutinesAsync(page, pageSize, userid);
             return Ok(result);
         }
         catch (Exception ex)
