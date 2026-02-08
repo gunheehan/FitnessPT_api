@@ -11,9 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // MySQL 연결
 var connectionString = builder.Configuration["FITNESSPT:ConnectionStrings:DatabaseConnection"];
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(
+        connectionString, 
+        new MariaDbServerVersion(new Version(11, 0, 0)) // MariaDB 버전 명시
+    ));
 // Controllers 추가
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
